@@ -1,0 +1,41 @@
+*bigfile-tools.txt*	Early buffer protection
+
+bigfile-tools                                       *bigfile-tools*
+    Early large/minified classification without external dependencies.
+
+QUICK START                                        *bigfile-tools-quickstart*
+    Requires Neovim 0.11+. Call before filetype consumers:
+>lua
+    require('bigfile_tools').setup({ buffer = { completion = false } })
+<
+COMMANDS                                           *bigfile-tools-commands*
+:BigfileToolsInfo                                   *:BigfileToolsInfo*
+    Inspect protection without enabling it. The entry point stays available
+    after disposal. Physical keys are never installed.
+
+OPTIONS                                            *bigfile-tools-options*
+    max_bytes: 1572864; max_line_length: 1000. Positive numbers or false.
+    filetype: 'bigfile', or false to retain normal filetype detection.
+    buffer: {}. Scalar buffer variables to set alongside bigfile=true.
+    window: foldmethod='manual', foldexpr='0', conceallevel=0, statuscolumn=''.
+    exclude: optional function(buf, path) returning true to skip protection.
+    Supplied buffer/window dictionaries replace their defaults.
+
+API                                                *bigfile-tools-api*
+    setup(opts), detect(buf, path), protect(buf), release(buf), info(), dispose().
+    Buffer IDs use zero for the current buffer. info() returns detached data.
+    protect() explicitly enables defaults if needed. release() can be followed
+    by automatic protection again on a later size event.
+
+LIFECYCLE                                          *bigfile-tools-lifecycle*
+    Equal setup retains existing resources. Reconfiguration/disposal release
+    owned flags/options while preserving later user changes and buffer contents.
+    The native filetype classifier stays registered but inert when disposed;
+    Neovim has no API to remove an individual filetype pattern.
+
+TROUBLESHOOTING                                     *bigfile-tools-troubleshooting*
+    Call setup before opening files. Check limits, exclude and :BigfileToolsInfo.
+    Integrations must honor the supplied buffer variables or bigfile marker.
+    The plugin does not install tools, modify PATH, or manage startup redraws.
+
+vim:tw=78:ts=8:noet:ft=help:norl:
